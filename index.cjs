@@ -1,9 +1,10 @@
 'use strict';
 
 function add(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number' || Number.isNaN(a) || Number.isNaN(b)) {
-    throw new TypeError('add expects two numbers');
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    throw new TypeError('Both arguments must be finite numbers (reviewed)');
   }
+
   return a + b;
 }
 

@@ -5,6 +5,14 @@ const assert = require('node:assert/strict');
 
 const add = require('../index.cjs');
 
+const EXPECTED_MESSAGE = 'Both arguments must be finite numbers (reviewed)';
+
+function assertFiniteNumberTypeError(error) {
+  assert.ok(error instanceof TypeError, 'expected error to be an instance of TypeError');
+  assert.equal(error.message, EXPECTED_MESSAGE);
+  return true;
+}
+
 test('default export is add and module.exports.add is the same function', () => {
   assert.equal(typeof add, 'function');
   assert.equal(add.add, add);
@@ -23,17 +31,18 @@ test('adds negative numbers and mixed signs', () => {
   assert.equal(add(5, -8), -3);
 });
 
-test('throws TypeError for non-number arguments', () => {
-  const invalidValues = ['2', null, undefined, NaN, {}, [], true];
+test('throws TypeError with the reviewed message for invalid first argument', () => {
+  const invalidValues = ['2', null, undefined, NaN, Infinity, -Infinity, {}, [], true];
 
   for (const value of invalidValues) {
-    assert.throws(() => add(value, 1), TypeError);
-    assert.throws(() => add(1, value), TypeError);
+    assert.throws(() => add(value, 1), assertFiniteNumberTypeError);
   }
 });
 
-test('throws TypeError for NaN in either argument', () => {
-  assert.throws(() => add(NaN, 1), TypeError);
-  assert.throws(() => add(1, NaN), TypeError);
-  assert.throws(() => add(NaN, NaN), TypeError);
+test('throws TypeError with the reviewed message for invalid second argument', () => {
+  const invalidValues = ['2', null, undefined, NaN, Infinity, -Infinity, {}, [], true];
+
+  for (const value of invalidValues) {
+    assert.throws(() => add(1, value), assertFiniteNumberTypeError);
+  }
 });
